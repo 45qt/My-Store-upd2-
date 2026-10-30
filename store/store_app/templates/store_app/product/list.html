@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Ретро Гаджеты 2000-х</title>
+    <style>
+        body { font-family: sans-serif; display: flex; flex-direction: column; margin: 0; padding: 20px; }
+        .main-container { display: flex; width: 100%; }
+        .sidebar { width: 200px; padding-right: 20px; }
+        .content-area { flex-grow: 1; }
+        
+        /* Стили для нового раздела с описанием магазина */
+        .about-store { background-color: #f4f4f9; border-left: 5px solid #8a2be2; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .about-store h2 { margin-top: 0; color: #8a2be2; font-size: 22px; }
+        .about-store p { color: #444; line-height: 1.6; font-size: 15px; margin-bottom: 0; }
+        
+        .promo-banner { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; margin-bottom: 20px; }
+        .catalog { display: flex; flex-wrap: wrap; gap: 20px; }
+        .card { border: 1px solid #ccc; padding: 15px; width: 200px; border-radius: 8px; }
+        .card img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <h3>Категории</h3>
+            <ul>
+                <li><a href="{% url 'store_app:product_list' %}">Все гаджеты</a></li>
+                {% for c in categories %}
+                    <li><a href="{% url 'store_app:product_list_by_category' c.slug %}">{{ c.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="content-area">
+            
+            <div class="about-store">
+                <h2>Добро пожаловать в машину времени! 🚀</h2>
+                <p>
+                    Мы — первый ламповый магазин оригинальных гаджетов родом из культовых нулевых. 
+                    Помните времена, когда музыка измерялась мегабайтами в MP3-плеерах, фотографии на «мыльницы» имели неповторимый шарм, 
+                    а вечера проходили в баталиях на Nintendo Wii и PSP? Мы находим, бережно восстанавливаем и передаем в ваши руки 
+                    те самые легендарные устройства в идеальном и рабочем состоянии. Вся техника оригинальная, протестирована экспертами и готова дарить чистую ностальгию!
+                </p>
+            </div>
+
+            <img class="promo-banner" src="{% static 'banner.jpg' %}?v=2" alt="Баннер скидок">
+
+            <div class="catalog">
+                {% for product in products %}
+                    <div class="card">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.title }}">
+                        {% endif %}
+                        <h4><a href="{% url 'store_app:product_detail' product.slug %}">{{ product.title }}</a></h4>
+                        <p>Бренд: {{ product.brand.name }}</p>
+                        <p>Год: {{ product.release_year }}</p>
+                        <p>Состояние: {{ product.get_condition_display }}</p>
+                        <strong>{{ product.price }} руб.</strong>
+                    </div>
+                {% empty %}
+                    <p>Гаджетов в этой категории пока нет.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
